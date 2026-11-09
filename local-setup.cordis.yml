@@ -1,0 +1,32 @@
+# Local-only setup for Abliteration, Playwright MCP, and Firecrawl MCP.
+# Secret values stay in the parent workspace .env file.
+- id: llm-pi-ai
+  config:
+    providers:
+      abliteration:
+        displayName: Abliteration
+        api: openai-completions
+        baseURL: https://api.abliteration.ai/v1
+        apiKeyEnv: ABLITERATION_API_KEY
+        compat:
+          supportsDeveloperRole: false
+          maxTokensField: max_tokens
+        models:
+          - id: abliterated-model-large-flash
+
+- id: mcp-manager
+  config:
+    servers:
+      playwright:
+        transport: stdio
+        command: npx
+        args: ['-y', '@playwright/mcp@latest', '--allowed-origins=http://127.0.0.1:5000']
+        cwd: !!js process.cwd()
+        env: {}
+        enabled: true
+      firecrawl:
+        transport: streamable-http
+        url: https://mcp.firecrawl.dev/v2/mcp
+        headers:
+          Authorization: 'Bearer ${credential:FIRECRAWL_API_KEY}'
+        enabled: true
